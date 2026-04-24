@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.mycompany</groupId>
+	<groupId>1c7adce9-1013-4ffa-880e-05549ce461aa</groupId>
 	<artifactId>financial-services</artifactId>
 	<version>1.0.0</version>
 	<packaging>mule-application</packaging>
@@ -15,6 +15,7 @@
 
 		<app.runtime>4.11.0</app.runtime>
 		<mule.maven.plugin.version>4.7.0</mule.maven.plugin.version>
+		<appName>${project.artifactId}</appName>
 	</properties>
 
 	<build>
@@ -30,7 +31,7 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>---- select project type ----</classifier>
+					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -70,6 +71,40 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>cloudhub</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.mule.tools.maven</groupId>
+						<artifactId>mule-maven-plugin</artifactId>
+						<version>${mule.maven.plugin.version}</version>
+						<extensions>true</extensions>
+						<configuration>
+							<classifier>mule-application</classifier>
+							<cloudhub2Deployment>
+								<uri>https://anypoint.mulesoft.com</uri>
+								<provider>MC</provider>
+								<environment>Sandbox</environment>
+								<target>Cloudhub-US-East-2</target>
+								<muleVersion>4.11.0</muleVersion>
+								<username>${app.username}</username>
+								<password>${app.password}</password>
+								<applicationName>${appName}</applicationName>
+								<replicas>1</replicas>
+								<vCores>0.1</vCores>
+								<properties>
+									<anypoint.platform.client_id>${anypoint.client_id}</anypoint.platform.client_id>
+									<anypoint.platform.client_secret>${anypoint.client_secret}</anypoint.platform.client_secret>
+								</properties>
+							</cloudhub2Deployment>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<repositories>
 		<repository>
 			<id>anypoint-exchange-v3</id>
@@ -97,4 +132,12 @@
 		</pluginRepository>
 	</pluginRepositories>
 
+	<distributionManagement>
+		<repository>
+			<id>U-REPO</id>
+			<name>U Repo</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${app.groupId}/maven</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
 </project>
